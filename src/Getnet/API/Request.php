@@ -1,5 +1,4 @@
 <?php
-
 namespace Getnet\API;
 
 use Exception;
@@ -81,7 +80,7 @@ class Request
 
   /**
    * start session for use
-   * 
+   *
    * @param Getnet $credentials
    * @return boolean
    */
@@ -105,7 +104,7 @@ class Request
   }
 
   /**
-   * 
+   *
    * @param Getnet $credentials
    * @param mixed $url_path
    * @param mixed $method
@@ -168,14 +167,20 @@ class Request
       throw new Exception(json_decode($response)->error_description, 100);
     }
 
-    if (curl_getinfo($curl, CURLINFO_HTTP_CODE) >= 400) {
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+
+    if ($httpCode >= 400) {
       throw new Exception($response, 100);
     }
+
     if (!$response) {
-      print "ERROR";
-      exit();
+        if ($httpCode >= 200 && $httpCode <= 300) {
+            return ["status_code" => $httpCode];
+        }
+        print "ERROR";
+        exit();
     }
-    curl_close($curl);
 
     return json_decode($response, true);
   }
@@ -230,7 +235,7 @@ class Request
   }
 
   /**
-   * 
+   *
    * @param Getnet $credentials
    * @param mixed $url_path
    * @param mixed $params
@@ -243,7 +248,7 @@ class Request
   }
 
   /**
-   * 
+   *
    * @param Getnet $credentials
    * @param mixed $url_path
    * @param mixed $params
@@ -256,7 +261,7 @@ class Request
   }
 
   /**
-   * 
+   *
    * @param Getnet $credentials
    * @param mixed $url_path
    * @param mixed $params
