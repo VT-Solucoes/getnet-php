@@ -1,12 +1,19 @@
 <?php
+
 namespace Getnet\API;
+
+use Getnet\DTO\Interfaces\ToJsonInterface;
+use Getnet\DTO\Traits\ToJsonTrait;
+use JsonSerializable;
 
 /**
  * Class Shipping
  *
  * @package Getnet\API
  */
-class Shipping implements \JsonSerializable {
+class Shipping implements JsonSerializable, ToJsonInterface
+{
+    use ToJsonTrait;
 
     private $first_name;
 
@@ -20,15 +27,12 @@ class Shipping implements \JsonSerializable {
 
     private $address;
     
-    public function jsonSerialize() {
-        return get_object_vars($this);
-    }
-
     /**
      *
      * @return mixed
      */
-    public function getFirstName() {
+    public function getFirstName()
+    {
         return $this->first_name;
     }
 
@@ -36,9 +40,10 @@ class Shipping implements \JsonSerializable {
      *
      * @param mixed $first_name
      */
-    public function setFirstName($first_name) {
+    public function setFirstName($first_name)
+    {
         $this->first_name = (string)$first_name;
-        
+
         return $this;
     }
 
@@ -46,7 +51,8 @@ class Shipping implements \JsonSerializable {
      *
      * @return mixed
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -54,9 +60,10 @@ class Shipping implements \JsonSerializable {
      *
      * @param mixed $name
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = (string)$name;
-        
+
         return $this;
     }
 
@@ -64,7 +71,8 @@ class Shipping implements \JsonSerializable {
      *
      * @return mixed
      */
-    public function getEmail() {
+    public function getEmail()
+    {
         return $this->email;
     }
 
@@ -72,9 +80,10 @@ class Shipping implements \JsonSerializable {
      *
      * @param mixed $email
      */
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         $this->email = (string)$email;
-        
+
         return $this;
     }
 
@@ -82,7 +91,8 @@ class Shipping implements \JsonSerializable {
      *
      * @return mixed
      */
-    public function getPhoneNumber() {
+    public function getPhoneNumber()
+    {
         return $this->phone_number;
     }
 
@@ -90,9 +100,10 @@ class Shipping implements \JsonSerializable {
      *
      * @param mixed $phone_number
      */
-    public function setPhoneNumber($phone_number) {
+    public function setPhoneNumber($phone_number)
+    {
         $this->phone_number = (string)$phone_number;
-        
+
         return $this;
     }
 
@@ -100,7 +111,8 @@ class Shipping implements \JsonSerializable {
      *
      * @return mixed
      */
-    public function getShippingAmount() {
+    public function getShippingAmount()
+    {
         return $this->shipping_amount;
     }
 
@@ -108,9 +120,10 @@ class Shipping implements \JsonSerializable {
      *
      * @param mixed $shipping_amount
      */
-    public function setShippingAmount($shipping_amount) {
+    public function setShippingAmount($shipping_amount)
+    {
         $this->shipping_amount = (int)($shipping_amount * 100);
-        
+
         return $this;
     }
 
@@ -118,7 +131,8 @@ class Shipping implements \JsonSerializable {
      *
      * @return Address
      */
-    public function getAddress() {
+    public function getAddress()
+    {
         return $this->address;
     }
 
@@ -126,38 +140,41 @@ class Shipping implements \JsonSerializable {
      *
      * @param mixed $address
      */
-    public function setAddress(Address $address) {
+    public function setAddress(Address $address)
+    {
         $this->address = $address;
-        
+
         return $this;
     }
-    
+
     /**
      *
      * @return Address
      */
-    public function address() {
+    public function address()
+    {
         $address = new Address();
-        
+
         $this->setAddress($address);
-        
+
         return $address;
     }
 
     /**
-     * 
+     *
      * @param Customer $customer
      * @return Shipping
      */
-    public function populateByCustomer(Customer $customer) {
-        
+    public function populateByCustomer(Customer $customer)
+    {
+
         $this->setFirstName($customer->getFirstName());
         $this->setName($customer->getName());
         $this->setEmail($customer->getEmail());
         $this->setPhoneNumber($customer->getPhoneNumber());
         $this->setAddress($customer->getBillingAddress());
-        
+
         return $this;
     }
-    
+
 }

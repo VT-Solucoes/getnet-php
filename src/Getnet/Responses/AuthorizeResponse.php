@@ -1,5 +1,5 @@
 <?php
-namespace Getnet\API;
+namespace Getnet\Responses;
 
 /**
  * Class AuthorizeResponse
@@ -46,7 +46,8 @@ class AuthorizeResponse extends BaseResponse {
      *
      * @param mixed $redirect_url
      */
-    public function setRedirectUrl($redirect_url) {
+    public function setRedirectUrl($redirect_url): AuthorizeResponse
+    {
         $this->redirect_url = $redirect_url;
         
         return $this;
@@ -64,7 +65,8 @@ class AuthorizeResponse extends BaseResponse {
      *
      * @param mixed $issuer_payment_id
      */
-    public function setIssuerPaymentId($issuer_payment_id) {
+    public function setIssuerPaymentId($issuer_payment_id): AuthorizeResponse
+    {
         $this->issuer_payment_id = $issuer_payment_id;
         
         return $this;
@@ -82,7 +84,8 @@ class AuthorizeResponse extends BaseResponse {
      *
      * @param mixed $payer_authentication_request
      */
-    public function setPayerAuthenticationRequest($payer_authentication_request) {
+    public function setPayerAuthenticationRequest($payer_authentication_request): AuthorizeResponse
+    {
         $this->payer_authentication_request = $payer_authentication_request;
         
         return $this;
@@ -101,7 +104,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $delayed
      * @return AuthorizeResponse
      */
-    public function setDelayed($delayed) {
+    public function setDelayed($delayed): AuthorizeResponse
+    {
         $this->delayed = $delayed;
 
         return $this;
@@ -120,7 +124,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $authorization_code
      * @return AuthorizeResponse
      */
-    public function setAuthorizationCode($authorization_code) {
+    public function setAuthorizationCode($authorization_code): AuthorizeResponse
+    {
         $this->authorization_code = $authorization_code;
 
         return $this;
@@ -139,7 +144,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $authorized_at
      * @return AuthorizeResponse
      */
-    public function setAuthorizedAt($authorized_at) {
+    public function setAuthorizedAt($authorized_at): AuthorizeResponse
+    {
         $this->authorized_at = $authorized_at;
 
         return $this;
@@ -158,7 +164,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $reason_code
      * @return AuthorizeResponse
      */
-    public function setReasonCode($reason_code) {
+    public function setReasonCode($reason_code): AuthorizeResponse
+    {
         $this->reason_code = $reason_code;
 
         return $this;
@@ -177,7 +184,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $reason_message
      * @return AuthorizeResponse
      */
-    public function setReasonMessage($reason_message) {
+    public function setReasonMessage($reason_message): AuthorizeResponse
+    {
         $this->reason_message = $reason_message;
 
         return $this;
@@ -196,7 +204,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $acquirer
      * @return AuthorizeResponse
      */
-    public function setAcquirer($acquirer) {
+    public function setAcquirer($acquirer): AuthorizeResponse
+    {
         $this->acquirer = $acquirer;
 
         return $this;
@@ -215,7 +224,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $soft_descriptor
      * @return AuthorizeResponse
      */
-    public function setSoftDescriptor($soft_descriptor) {
+    public function setSoftDescriptor($soft_descriptor): AuthorizeResponse
+    {
         $this->soft_descriptor = $soft_descriptor;
 
         return $this;
@@ -234,7 +244,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $brand
      * @return AuthorizeResponse
      */
-    public function setBrand($brand) {
+    public function setBrand($brand): AuthorizeResponse
+    {
         $this->brand = $brand;
 
         return $this;
@@ -253,7 +264,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $terminal_nsu
      * @return AuthorizeResponse
      */
-    public function setTerminalNsu($terminal_nsu) {
+    public function setTerminalNsu($terminal_nsu): AuthorizeResponse
+    {
         $this->terminal_nsu = $terminal_nsu;
 
         return $this;
@@ -272,7 +284,8 @@ class AuthorizeResponse extends BaseResponse {
      * @param mixed $acquirer_transaction_id
      * @return AuthorizeResponse
      */
-    public function setAcquirerTransactionId($acquirer_transaction_id) {
+    public function setAcquirerTransactionId($acquirer_transaction_id): AuthorizeResponse
+    {
         $this->acquirer_transaction_id = $acquirer_transaction_id;
 
         return $this;

@@ -1,202 +1,233 @@
 <?php
+
 namespace Getnet\API;
+
+use Exception;
+use Getnet\DTO\CreditCardStore;
+use Getnet\DTO\CreditCardTokenizer;
+use Getnet\DTO\Interfaces\ToJsonInterface;
+use Getnet\Exceptions\HttpException;
+use Getnet\Exceptions\InvalidArgumentException;
+use Getnet\Responses\AuthorizeResponse;
+use Getnet\Responses\BaseResponse;
+use Getnet\Responses\BoletoResponse;
+use Getnet\Responses\CreditCardTokenResponse;
+use Getnet\Responses\StoreCreditCardResponse;
 
 /**
  * Class Getnet
  *
  * @package Getnet\API
  */
-class Getnet {
+class Getnet
+{
 
-    private $client_id;
+    private string $client_id;
 
-    private $client_secret;
+    private string $client_secret;
 
-    private $environment;
+    private Environment $environment;
 
-    private $authorizationToken;
+    private ?string $authorizationToken = null;
 
-    private $keySession;
-    
+    private string $keySession;
+
 
     /**
-     * 
      * @param mixed $client_id
      * @param mixed $client_secret
-     * @param mixed $env
-     * @return Getnet
+     * @param Environment|null $environment
+     * @param null $keySession
+     * @throws Exception
      */
-    public function __construct($client_id, $client_secret, Environment $environment = null, $keySession = null) {
-        
+    public function __construct($client_id, $client_secret, Environment $environment = null, $keySession = null)
+    {
         if (!$environment) {
             $environment = Environment::production();
         }
-        
+
         $this->setClientId($client_id);
         $this->setClientSecret($client_secret);
         $this->setEnvironment($environment);
-        $this->setKeySession($keySession);
+        $this->setKeySession($keySession ?? md5(rand()));
 
         $request = new Request($this);
 
         return $request->auth($this);
     }
-    
+
     /**
-     * @return \Getnet\API\Request
+     * @return string
      */
-    public function getClientId() {
+    public function getClientId(): string
+    {
         return $this->client_id;
     }
 
     /**
-     * @param \Getnet\API\Request $client_id
+     * @param string $client_id
+     * @return Getnet
      */
-    public function setClientId($client_id) {
-        $this->client_id = (string)$client_id;
-        
+    public function setClientId(string $client_id): Getnet
+    {
+        $this->client_id = $client_id;
+
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getClientSecret() {
+    public function getClientSecret(): string
+    {
         return $this->client_secret;
     }
 
     /**
-     * @param mixed $client_secret
+     * @param string $client_secret
+     * @return Getnet
      */
-    public function setClientSecret($client_secret) {
-        $this->client_secret = (string)$client_secret;
-        
+    public function setClientSecret(string $client_secret): Getnet
+    {
+        $this->client_secret = $client_secret;
+
         return $this;
     }
 
     /**
      * @return Environment
      */
-    public function getEnvironment() {
+    public function getEnvironment(): Environment
+    {
         return $this->environment;
     }
 
     /**
-     * @param string $environment
+     * @param Environment $environment
+     * @return Getnet
      */
-    public function setEnvironment(Environment $environment) {
+    public function setEnvironment(Environment $environment): Getnet
+    {
         $this->environment = $environment;
-        
+
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return null|string
      */
-    public function getAuthorizationToken() {
+    public function getAuthorizationToken(): ?string
+    {
         return $this->authorizationToken;
     }
 
     /**
-     * @param mixed $authorizationToken
+     * @param string $authorizationToken
+     * @return Getnet
      */
-    public function setAuthorizationToken($authorizationToken) {
-        $this->authorizationToken = (string)$authorizationToken;
-        
+    public function setAuthorizationToken(string $authorizationToken): Getnet
+    {
+        $this->authorizationToken = $authorizationToken;
+
         return $this;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getKeySession() {
-        return $this->keySession;
-    }
-    
-    /**
-     * @param mixed $keySession
-     */
-    public function setKeySession($keySession) {
-        $this->keySession = (string)$keySession;
     }
 
     /**
-     * 
+     * @return string
+     */
+    public function getKeySession(): string
+    {
+        return $this->keySession;
+    }
+
+    /**
+     * @param string $keySession
+     * @return Getnet
+     */
+    public function setKeySession(string $keySession): Getnet
+    {
+        $this->keySession = $keySession;
+
+        return $this;
+    }
+
+    /**
+     *
      * @param Transaction $transaction
      * @return BaseResponse|AuthorizeResponse
      */
-    public function authorize(Transaction $transaction) {
+    public function authorize(Transaction $transaction)
+    {
         try {
-
             $request = new Request($this);
 
             if ($transaction->getCredit()) {
-                $response = $request->post($this, "/v1/payments/credit", $transaction->toJSON());
+                $response = $request->post($this, "/v1/payments/credit", $transaction->toJson());
             } elseif ($transaction->getDebit()) {
-                $response = $request->post($this, "/v1/payments/debit", $transaction->toJSON());
-            }else{
-                throw new \Exception("Error select credit or debit");
+                $response = $request->post($this, "/v1/payments/debit", $transaction->toJson());
+            } else {
+                throw new InvalidArgumentException("Error select credit or debit");
             }
-        } catch (\Exception $e) {
-
+        } catch (Exception $e) {
             $error = new BaseResponse();
             $error->mapperJson(json_decode($e->getMessage(), true));
 
             return $error;
         }
 
-        $authresponse = new AuthorizeResponse();
-        $authresponse->mapperJson($response);
+        $authResponse = new AuthorizeResponse();
+        $authResponse->mapperJson($response);
 
-        return $authresponse;
+        return $authResponse;
     }
 
     /**
-     * 
      * @param mixed $payment_id
      * @return BaseResponse|AuthorizeResponse
      */
-    public function authorizeConfirm($payment_id) {
+    public function authorizeConfirm($payment_id)
+    {
         try {
             $request = new Request($this);
-            $response = $request->post($this, "/v1/payments/credit/".$payment_id."/confirm", "");
-        } catch (\Exception $e) {
+            $response = $request->post($this, "/v1/payments/credit/" . $payment_id . "/confirm", "");
+        } catch (Exception $e) {
 
             $error = new BaseResponse();
             $error->mapperJson(json_decode($e->getMessage(), true));
 
             return $error;
         }
-        
-        $authresponse = new AuthorizeResponse();
-        $authresponse->mapperJson($response);
 
-        return $authresponse;
+        $authResponse = new AuthorizeResponse();
+        $authResponse->mapperJson($response);
+
+        return $authResponse;
     }
 
     /**
-     * 
+     *
      * @param mixed $payment_id
      * @param mixed $payer_authentication_response
      * @return BaseResponse|AuthorizeResponse
      */
-    public function authorizeConfirmDebit($payment_id, $payer_authentication_response) {
+    public function authorizeConfirmDebit($payment_id, $payer_authentication_response)
+    {
         try {
             $payer_authentication_response = array("payer_authentication_response" => $payer_authentication_response);
             $request = new Request($this);
-            $response = $request->post($this, "/v1/payments/debit/".$payment_id."/authenticated/finalize", json_encode($payer_authentication_response));
-        } catch (\Exception $e) {
+            $response = $request->post($this, "/v1/payments/debit/" . $payment_id . "/authenticated/finalize", json_encode($payer_authentication_response));
+        } catch (Exception $e) {
 
             $error = new BaseResponse();
             $error->mapperJson(json_decode($e->getMessage(), true));
 
             return $error;
         }
-        
-        $authresponse = new AuthorizeResponse();
-        $authresponse->mapperJson($response);
 
-        return $authresponse;
+        $authResponse = new AuthorizeResponse();
+        $authResponse->mapperJson($response);
+
+        return $authResponse;
     }
 
     /**
@@ -206,80 +237,132 @@ class Getnet {
      * @param $amount_val
      * @return AuthorizeResponse|BaseResponse
      */
-    public function authorizeCancel($payment_id, $amount_val) {
+    public function authorizeCancel($payment_id, $amount_val)
+    {
         $amount = array("amount" => $amount_val);
 
         try {
             $request = new Request($this);
-            $response = $request->post($this, "/v1/payments/credit/".$payment_id."/cancel", json_encode($amount));
-        } catch (\Exception $e) {
+            $response = $request->post($this, "/v1/payments/credit/" . $payment_id . "/cancel", json_encode($amount));
+        } catch (Exception $e) {
 
             $error = new BaseResponse();
             $error->mapperJson(json_decode($e->getMessage(), true));
 
             return $error;
         }
-        
-        $authresponse = new AuthorizeResponse();
-        $authresponse->mapperJson($response);
 
-        return $authresponse;
+        $authResponse = new AuthorizeResponse();
+        $authResponse->mapperJson($response);
+
+        return $authResponse;
     }
 
     /**
      * Solicita o cancelamento de transações que foram realizadas há mais de 1 dia (D+n).
-     * 
+     *
      * @param mixed $payment_id
      * @param mixed $cancel_amount
      * @param mixed $cancel_custom_key
      * @return AuthorizeResponse|BaseResponse
      */
-    public function cancelTransaction($payment_id, $cancel_amount, $cancel_custom_key) {
-        
-        $params = array("payment_id"=>$payment_id, "cancel_amount"=>$cancel_amount, "cancel_custom_key"=>$cancel_custom_key);
+    public function requestCancelTransaction($payment_id, $cancel_amount, $cancel_custom_key)
+    {
+
+        $params = array("payment_id" => $payment_id, "cancel_amount" => $cancel_amount, "cancel_custom_key" => $cancel_custom_key);
 
         try {
             $request = new Request($this);
             $response = $request->post($this, "/v1/payments/cancel/request", json_encode($params));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             $error = new BaseResponse();
             $error->mapperJson(json_decode($e->getMessage(), true));
 
             return $error;
         }
-        
-        $authresponse = new AuthorizeResponse();
-        $authresponse->mapperJson($response);
 
-        return $authresponse;
+        $authResponse = new AuthorizeResponse();
+        $authResponse->mapperJson($response);
+
+        return $authResponse;
     }
 
     /**
      *
      * @param Transaction $transaction
-     * @return BaseResponse|BoletoRespose
+     * @return BaseResponse|BoletoResponse
      */
-    public function boleto(Transaction $transaction) {
+    public function boleto(Transaction $transaction)
+    {
         try {
             $request = new Request($this);
-            $response = $request->post($this, "/v1/payments/boleto", $transaction->toJSON());
-            // if ($this->debug)
-            //     print $transaction->toJSON();
-        } catch (\Exception $e) {
-
+            $response = $request->post($this, "/v1/payments/boleto", $transaction->toJson());
+        } catch (Exception $e) {
             $error = new BaseResponse();
             $error->mapperJson(json_decode($e->getMessage(), true));
 
             return $error;
         }
-        
-        $boletoresponse = new BoletoRespose();
-        $boletoresponse->mapperJson($response);
-        $boletoresponse->setBaseUrl($request->getBaseUrl());
-        $boletoresponse->generateLinks();
 
-        return $boletoresponse;
+        $boletoResponse = new BoletoResponse();
+        $boletoResponse->mapperJson($response);
+        $boletoResponse->setBaseUrl($request->getBaseUrl());
+        $boletoResponse->generateLinks();
+
+        return $boletoResponse;
     }
 
+    /**
+     * Executa a requisição para a API
+     *
+     * @param string $method
+     * @param string $path
+     * @param ToJsonInterface $toJson
+     * @return array|BaseResponse|mixed
+     * @throws HttpException
+     */
+    protected function request(string $method, string $path, ToJsonInterface $toJson)
+    {
+        try {
+            $request = new Request($this);
+
+            return $request->{$method}($this, $path, $toJson->toJson());
+        } catch (Exception $e) {
+            $baseResponse = new BaseResponse();
+            $baseResponse->mapperJson(json_decode($e->getMessage(), true));
+
+            throw new HttpException($baseResponse->error_message);
+        }
+    }
+
+    /**
+     * @param CreditCardTokenizer $creditCardTokenizer
+     * @return CreditCardTokenResponse
+     * @throws HttpException
+     */
+    public function requestCardToken(CreditCardTokenizer $creditCardTokenizer): CreditCardTokenResponse
+    {
+        $safeResponse = new CreditCardTokenResponse();
+        $safeResponse->mapperJson(
+            $this->request('post', "/v1/tokens/card", $creditCardTokenizer)
+        );
+
+        return $safeResponse;
+    }
+
+    /**
+     * @param CreditCardStore $creditCard
+     * @return StoreCreditCardResponse
+     * @throws HttpException
+     */
+    public function requestStoreCreditCard(CreditCardStore $creditCard): StoreCreditCardResponse
+    {
+        $safeResponse = new StoreCreditCardResponse();
+        $safeResponse->mapperJson(
+            $this->request('post', "/v1/cards", $creditCard)
+        );
+
+        return $safeResponse;
+    }
 }

@@ -1,5 +1,5 @@
 /vendor/
 /.settings/
 /.project
+/.idea
 .buildpath
-composer.lock

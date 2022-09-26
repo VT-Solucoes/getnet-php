@@ -1,23 +1,16 @@
-### GETNET SDK PHP - API v1
-E-commerce
+# GETNET SDK PHP - API v1.1
+Maior parte dos processos referentes à integração com o sistema de captura e autorização de transações financeiras da
+Getnet via as funcionalidades da API.
 
-Todos os passos e processos referentes à integração com o sistema de captura e autorização de transações financeiras da Getnet via as funcionalidades da API.
-
- Documentação oficial
+Documentação oficial
 * https://developers.getnet.com.br/api
 
-#### Composer
+## Instalação
+```shell
+composer require VT-Solucoes/getnet-php
+```
 
-add composer.json
-```
-"meirinaldojunior/getnet-php": "^1.0"
-```
-ou execute
-```
-$ composer require meirinaldojunior/getnet-php
-```
 #### Exemplo Autorização com cartão de crédito MasterCard R$27,50 em 2x 
-
 ```php
 use Getnet\API\Getnet;
 use Getnet\API\Transaction;
@@ -36,7 +29,7 @@ $client_secret  = "f52a2358-70e6-4baa-b77f-9f0eeb7c8706";
 $seller_id      = "c695b415-6f2e-4475-a221-3c005258a450";
 $environment    = Environment::sandbox();
 
-//Opicional, passar chave se você quiser guardar o token do auth na sessão para não precisar buscar a cada trasação, só quando expira
+//Opcional, passar chave se você quiser guardar o token do auth na sessão para não precisar buscar a cada transação, só quando expira
 $keySession = null;
 
 //Autenticação da API
@@ -52,11 +45,18 @@ $transaction->setAmount(27.50);
 
 // Detalhes do Pedido
 $transaction->order("123456")
-->setProductType(Order::PRODUCT_TYPE_SERVICE)
-->setSalesTax(0);
+    ->setProductType(Order::PRODUCT_TYPE_SERVICE)
+    ->setSalesTax(0);
 
-// Gera token do cartão - Obrigatório
-$tokenCard = new Token("5155901222280001", "customer_210818263", $getnet);
+// Gera token do cartão
+$tokenCard = new Token();
+$tokenCard->setGetnet($getnet)
+    ->setCardNumber("5155901222280001")
+    ->setCustomerId("customer_210818263")
+    ->requestANewToken();
+// Ou utilize setNumberToken para informa um token já existente (esta opção serve se você guardou os dados do cartão no
+//cofre da Getnet)
+$tokenCard->setNumberToken("24b1afb13da3b6aaf58f7fe58b1e6f1348c9c28e3a72df651f2930ec7939dc2ed4bae4c855ee395de60725ffb249653bc648d6d9d0237f79cda0093590aa4ac7")
 
 // Dados do método de pagamento do comprador
 $transaction->credit()
@@ -68,7 +68,7 @@ $transaction->credit()
             ->setNumberInstallments(2)
             ->setSaveCardData(false)
             ->setTransactionType(Credit::TRANSACTION_TYPE_INSTALL_NO_INTEREST)
-            ->card($tokenCard)
+            ->card($tokenCard)//Obrigatório
                 ->setBrand(Card::BRAND_MASTERCARD)
                 ->setExpirationMonth("12")
                 ->setExpirationYear("20")
@@ -114,7 +114,7 @@ $transaction->shipping()
 //Ou pode adicionar entrega com os mesmos dados do customer
 //$transaction->addShippingByCustomer($transaction->getCustomer())->setShippingAmount(0);
 
-// FingerPrint - Antifraude
+// FingerPrint - Anti-fraude
 $transaction->device("device_id")->setIpAddress("127.0.0.1");
 
 // Processa a Transação
@@ -160,7 +160,7 @@ $transaction->debit()
             ->setCardholderMobile("5551999887766")
             ->setDynamicMcc("1799")
             ->setSoftDescriptor("LOJA*TESTE*COMPRA-123")
-            ->card($tokenCard)
+            ->card($tokenCard)//Obrigatório
                 ->setBrand(Card::BRAND_MASTERCARD)
                 ->setExpirationMonth("12")
                 ->setExpirationYear("20")
@@ -170,9 +170,10 @@ $transaction->debit()
 $response = $getnet->authorize($transaction);
 ```
 
-*Depois de autorizar é preciso redirecionar o cliente para o redirect_url passando uma url de callback
+* Depois de autorizar é preciso redirecionar o cliente para o redirect_url passando uma url de callback
 
 ```html
+<!--suppress HtmlUnknownTarget -->
 <form action="<?php echo $response->getRedirectUrl();?>" method="post" target="_blank">
     <input type="hidden" name="MD"  value="<?php echo $response->getIssuerPaymentId();?>" />
     <input type="hidden" name="PaReq"  value="<?php echo $response->getPayerAuthenticationRequest();?>" />
@@ -182,10 +183,10 @@ $response = $getnet->authorize($transaction);
 </form>
 ```
 
-*Depois do cliente finalizar o pagamento e você receber o callback
+* Depois do cliente finalizar o pagamento e você receber o callback
 
 ```php
-//CONFIRMAR O PAGAMENTO COM payer_authentication_response recibo na URL de Noficação
+//CONFIRMAR O PAGAMENTO COM payer_authentication_response recibo na URL de notificação
 $response = $getnet->authorizeConfirmDebit($response->getPaymentId(), $payer_authentication_response);
 
 // Resultado da transação - Consultar tabela abaixo
@@ -193,7 +194,6 @@ $response->getStatus();
 ```
 
 #### BOLETO BANCÁRIO (SANTANDER)
-
 ```php
 //Autenticação da API
 $getnet = new Getnet($client_id, $client_secret, $environment, $keySession);
@@ -241,58 +241,55 @@ $response->getStatus();
 ```
 
 ### Possíveis status de resposta de uma transação
-|Status|Descrição|
-| ------- | --------- |
-|PENDING|Registrada ou Aguardando ação|
-|CANCELED|Desfeita ou Cancelada|
-|APPROVED|Aprovada|
-|DENIED|Negada|
-|AUTHORIZED|Autorizada pelo emissor|
-|CONFIRMED|Confirmada ou Capturada|
+| Status      | Descrição                     |
+|-------------|-------------------------------|
+| PENDING     | Registrada ou Aguardando ação |
+| CANCELED    | Desfeita ou Cancelada         |
+| APPROVED    | Aprovada                      |
+| DENIED      | Negada                        |
+| AUTHORIZED  | Autorizada pelo emissor       |
+| CONFIRMED   | Confirmada ou Capturada       |
 
 ### Cartões para testes
-
-|  N. Cartão |  Resultado esperado |
-| ------------ | ------------ |
-|  5155901222280001 (Master)	  | Transação Autorizada  |
-| 5155901222270002   (Master)|  Transação Não Autorizada |
-|  5155901222260003 (Master) |  Transação Não Autorizada |
-| 5155901222250004 (Master) |Transação Não Autorizada|
-| 4012001037141112 (Visa) |Transação Autorizada|
+| N. Cartão                 | Resultado esperado       |
+|---------------------------|--------------------------|
+| 5155901222280001 (Master) | Transação Autorizada     |
+| 5155901222270002 (Master) | Transação Não Autorizada |
+| 5155901222260003 (Master) | Transação Não Autorizada |
+| 5155901222250004 (Master) | Transação Não Autorizada |
+| 4012001037141112 (Visa)   | Transação Autorizada     |
 
 
 ### Ambientes disponíveis
-|Paramentro|Detalhe|
-| ------- | --------- |
-|SANDBOX|Sandbox - para desenvolvedores |
-|HOMOLOG|Homologação - para lojistas e devs |
-|PRODUCTION|Produção - somente lojistas |
+| Parâmetro  | Detalhe                             |
+|------------|-------------------------------------|
+| SANDBOX    | Sandbox - para desenvolvedores      |
+| HOMOLOG    | Homologação - para lojistas e devs  |
+| PRODUCTION | Produção - somente lojistas         |
 
 ### Meios de Pagamento
-|Modalidade|Descrição|
-| ------- | --------- |
-|CREDIT|Pagamento com cartão de crédito|
-|DEBIT|Pagamento com cartão de débito|
-|BOLETO|Gera boleto|
+| Modalidade | Descrição                       |
+|------------|---------------------------------|
+| CREDIT     | Pagamento com cartão de crédito |
+| DEBIT      | Pagamento com cartão de débito  |
+| BOLETO     | Gera boleto                     |
 
 
 ### Métodos de Pagamento
-|Método|Descrição|
-| ------- | --------- |
-|authorize|Autoriza uma transação com Pre-Auth ou não|
-|authorizeConfirm|Confirma uma autorização de crédito|
-|authorizeConfirmDebit|Confirma uma autorização de débito|
-|authorizeCancel|Cancela a transação|
-|boleto|Gera boleto|
+| Método                 | Descrição                                  |
+|------------------------|--------------------------------------------|
+| authorize              | Autoriza uma transação com Pre-Auth ou não |
+| authorizeConfirm       | Confirma uma autorização de crédito        |
+| authorizeConfirmDebit  | Confirma uma autorização de débito         |
+| authorizeCancel        | Cancela a transação                        |
+| boleto                 | Gera boleto                                |
 
 
 ### Tipos de transação via cartão de crédito
-Tipo de transação. Pagamento completo à vista, parcelado sem juros, parcelado com juros.
-
-|Tipo|Descrição|
-| ------- | --------- |
-|FULL|agamento completo à vista|
-|INSTALL_NO_INTEREST|parcelado sem juros|
-|INSTALL_WITH_INTEREST|parcelado com juros|
+| Tipo                   | Descrição                  |
+|------------------------|----------------------------|
+| FULL                   | Pagamento completo à vista |
+| INSTALL_NO_INTEREST    | Parcelado sem juros        |
+| INSTALL_WITH_INTEREST  | Parcelado com juros        |
 
 

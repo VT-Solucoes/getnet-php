@@ -2,15 +2,20 @@
 
 namespace Getnet\API;
 
+use Getnet\DTO\Interfaces\ToJsonInterface;
+use Getnet\DTO\Traits\ToJsonTrait;
+use JsonSerializable;
+
 /**
  * Class Customer
  *
  * @package Getnet\API
  */
-class Customer implements \JsonSerializable
+class Customer implements JsonSerializable, ToJsonInterface
 {
-
-    const DOCUMENT_TYPE_CPF  = "CPF";
+    use ToJsonTrait;
+    
+    const DOCUMENT_TYPE_CPF = "CPF";
     const DOCUMENT_TYPE_CNPJ = "CNPJ";
 
     private $customer_id;
@@ -34,21 +39,6 @@ class Customer implements \JsonSerializable
     public function __construct($customer_id = null)
     {
         $this->setCustomerId($customer_id);
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        $vars = get_object_vars($this);
-
-        $vars_clear = array_filter($vars, function ($value) {
-            return null !== $value;
-        });
-
-        return $vars_clear;
     }
 
     /**
@@ -245,9 +235,9 @@ class Customer implements \JsonSerializable
     }
 
     /**
-     * 
+     *
      * Cria um novo cliente
-     * 
+     *
      */
     public function newCustomer(Getnet $credencial, $customer)
     {
@@ -272,9 +262,9 @@ class Customer implements \JsonSerializable
     }
 
     /**
-     * 
+     *
      * Lista clientes
-     * 
+     *
      */
     public function getCustomer(Getnet $credencial, $cpf)
     {
@@ -291,6 +281,7 @@ class Customer implements \JsonSerializable
             $this->celphone_number = $response['customers'][0]['celphone_number'];
             $this->email = $response['customers'][0]['email'];
             $this->status = $response['customers'][0]['status'];
+
             return $this;
         } else {
             return null;
