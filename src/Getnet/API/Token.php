@@ -73,7 +73,8 @@ class Token
     /**
      * @return string
      */
-    public function getCustomerId(): string
+    public function getCustomerId()
+   : string
     {
         return $this->customer_id;
     }

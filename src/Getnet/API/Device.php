@@ -22,14 +22,15 @@ class Device implements JsonSerializable, ToJsonInterface
 
     /**
      *
-     * @param mixed $device_id
+     * @param string|null $device_id
      */
-    public function __construct($device_id)
+    public function __construct($device_id = null)
     {
         $this->device_id = $device_id;
     }
 
     /**
+     *
      * @return mixed
      */
     public function getDeviceId()
@@ -38,16 +39,17 @@ class Device implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $device_id
      */
     public function setDeviceId($device_id)
     {
-        $this->device_id = (string)$device_id;
-
+        $this->device_id = (string) $device_id;
         return $this;
     }
 
     /**
+     *
      * @return mixed
      */
     public function getIpAddress()
@@ -56,13 +58,12 @@ class Device implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $ip_address
      */
     public function setIpAddress($ip_address)
     {
-        $this->ip_address = (string)$ip_address;
-
+        $this->ip_address = (string) $ip_address;
         return $this;
     }
-
 }

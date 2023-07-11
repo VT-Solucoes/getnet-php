@@ -24,9 +24,9 @@ use Getnet\API\Boleto;
 
 include 'vendor/autoload.php';
 
-$client_id      = "3a666a8c-6d97-4eb0-a62c-77e3758c3425";
-$client_secret  = "f52a2358-70e6-4baa-b77f-9f0eeb7c8706";
-$seller_id      = "c695b415-6f2e-4475-a221-3c005258a450";
+$client_id      = "xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxx";
+$client_secret  = "xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxx";
+$seller_id      = "xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxx";
 $environment    = Environment::sandbox();
 
 //Opcional, passar chave se você quiser guardar o token do auth na sessão para não precisar buscar a cada transação, só quando expira
@@ -147,6 +147,27 @@ $cancel = $getnet->authorizeCancel("[PAYMENT_ID]", [AMOUNT]);
 $cancel->getStatus();
 ```
 
+#### PAGAMENTO VIA PIX
+```php
+// Autenticação da API
+$getnet = new Getnet($client_id, $client_secret, $environment);
+// Atenção Obrigatório adicionar seller_id no header do PIX
+$getnet->setSellerId($seller_id);
+
+// Cria a transação
+$transaction = new PixTransaction(75.50);
+$transaction->setCurrency("BRL");
+$transaction->setOrderId('DEV-1608748980');
+$transaction->setCustomerId('12345');
+
+// Cria a transação e retorna dados do QR Code
+// Pagamento é confirmado via notificações https://developers.getnet.com.br/api#tag/Notificacoes-1.0
+// O QR Code PIX tem um limite de expiração, que é de 3 minutos, após esse período deve ser gerado um novo QR Code e o anterior deve ser desconsiderado.
+$response = $getnet->pix($transaction);
+print $response->getQrCode();
+
+```
+
 #### CARTÃO DE DÉBITO
 ```php
 // Autenticação da API
@@ -249,6 +270,7 @@ $response->getStatus();
 | DENIED      | Negada                        |
 | AUTHORIZED  | Autorizada pelo emissor       |
 | CONFIRMED   | Confirmada ou Capturada       |
+|WAITING|Aguardando pagamento pix|
 
 ### Cartões para testes
 | N. Cartão                 | Resultado esperado       |
@@ -283,6 +305,20 @@ $response->getStatus();
 | authorizeConfirmDebit  | Confirma uma autorização de débito         |
 | authorizeCancel        | Cancela a transação                        |
 | boleto                 | Gera boleto                                |
+
+###  Instalar e configurar ambiente para desenvolvimento/alterações
+
+- Clone o repositório
+- Instale as dependências rodando `composer install` na raiz do projeto
+- Na pasta `config` crie um arquivo `config/env.test.php` baseado no `config/env.test.php.txt`
+- Adicione suas credenciais do sandbox da getnet no `config/env.test.php`
+-  **Rodar testes**
+    - `composer test`
+    - `composer test:unit`
+    - `composer test:e2e`
+    - `composer phpstan`
+
+
 
 
 ### Tipos de transação via cartão de crédito

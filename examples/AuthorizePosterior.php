@@ -1,33 +1,21 @@
 <?php
-use Getnet\API\Getnet;
 use Getnet\API\Transaction;
-use Getnet\API\Environment;
 use Getnet\API\Token;
+use Getnet\API\Credit;
 use Getnet\API\Customer;
 use Getnet\API\Card;
 use Getnet\API\Order;
 
-
-session_start();
-include "../vendor/autoload.php";
-
-
-$client_id      = "3a666a8c-6d97-4eb0-a62c-77e3758c3425";
-$client_secret  = "f52a2358-70e6-4baa-b77f-9f0eeb7c8706";
-$seller_id      = "c695b415-6f2e-4475-a221-3c005258a450";
-$environment    = Environment::sandbox();
-
-//Opicional, passar chave se você quiser guardar o token do auth na sessão para não precisar buscar a cada trasação, só quando expira
-$keySession = null;
+require_once '../config/bootstrap.test.php';
 
 //Autenticação da API
-$getnet = new Getnet($client_id, $client_secret, $environment, $keySession);
+$getnet = getnetServiceTest();
 
 //Cria a transação
 $transaction = new Transaction();
-$transaction->setSellerId($seller_id);
+$transaction->setSellerId($getnet->getSellerId());
 $transaction->setCurrency("BRL");
-$transaction->setAmount(33.33);
+$transaction->setAmount(45.90);
 
 //Adicionar dados do Pedido
 $transaction->order("123456")
@@ -38,14 +26,19 @@ $transaction->order("123456")
 $tokenCard = new Token("5155901222280001", "customer_210818263", $getnet);
 
 //Adicionar dados do Pagamento
-$transaction->debit()
-            ->setCardholderMobile("5551999887766")
+$transaction->credit()
+            ->setAuthenticated(false)
             ->setDynamicMcc("1799")
             ->setSoftDescriptor("LOJA*TESTE*COMPRA-123")
+            ->setDelayed(false)
+            ->setPreAuthorization(true)
+            ->setNumberInstallments(2)
+            ->setSaveCardData(false)
+            ->setTransactionType(Credit::TRANSACTION_TYPE_INSTALL_NO_INTEREST)
             ->card($tokenCard)
                 ->setBrand(Card::BRAND_MASTERCARD)
                 ->setExpirationMonth("12")
-                ->setExpirationYear("20")
+                ->setExpirationYear(date('y')+1)
                 ->setCardholderName("Jax Teller")
                 ->setSecurityCode("123");
 
@@ -94,47 +87,10 @@ $transaction->device("device_id")->setIpAddress("127.0.0.1");
 $response = $getnet->authorize($transaction);
 print_r($response->getStatus()."\n");
 
-##### EMULA O REDIRECIONAMENTO E POST LADO CLIENTE -  $response->getRedirectUrl()
-
-//URL QUE A GETNET IRÁ RETORNAR com o parametro payer_authentication_response
-$URL_NOTIFY = "http://localhost/url-notify";
-
-// EMULA POST
-$curl = curl_init();
-curl_setopt_array($curl, array(
-    CURLOPT_URL            => $response->getRedirectUrl(),
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING       => "",
-    CURLOPT_MAXREDIRS      => 10,
-    CURLOPT_TIMEOUT        => 30,
-    CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST  => "POST",
-    CURLOPT_POSTFIELDS     => "MD=".$response->getIssuerPaymentId()."&PaReq=".$response->getPayerAuthenticationRequest()."&TermUrl=".urlencode($URL_NOTIFY),
-    CURLOPT_HTTPHEADER     => array(
-        "Cache-Control: no-cache",
-        "Content-Type: application/x-www-form-urlencoded"
-    ),
-));
-$response_curl = curl_exec($curl);
-curl_close($curl);
-$word = explode("VALUE=", $response_curl);
-$payer_authentication_response = trim(str_replace(' escapeXml="false"/>', "", strip_tags($word[1])));
-?>
-<form action="<?php echo $response->getRedirectUrl();?>" method="post" target="_blank">
-    <input type="hidden" name="MD"  value="<?php echo $response->getIssuerPaymentId();?>" />
-    <input type="hidden" name="PaReq"  value="<?php echo $response->getPayerAuthenticationRequest();?>" />
-    <input type="hidden" name="TermUrl"  value="<?php echo $URL_NOTIFY;?>" />
-    
-    <input type="submit" value="Authentication Card" />
-</form>
-
-<?php
-//CONFIRMAR O PAGAMENTO COM payer_authentication_response recibo na URL de Noficação
-$response = $getnet->authorizeConfirmDebit($response->getPaymentId(), $payer_authentication_response);
-print_r($response->getStatus()."\n");
-
+### CONFIRMA PAGAMENTO (CAPTURA)
+$capture = $getnet->authorizeConfirm($response->getPaymentId(), $response->getAmount());
+print_r($capture->getStatus()."\n");
 
 ### CANCELA PAGAMENTO (CANCEL)
 $cancel = $getnet->authorizeCancel($response->getPaymentId(), $response->getAmount());
-
 print_r($cancel->getStatus()."\n");

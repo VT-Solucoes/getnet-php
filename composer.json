@@ -9,10 +9,32 @@
     "php": ">=7.4",
     "ext-json": "*"
   },
+  "require-dev":{
+    "phpunit/phpunit":"^9",
+    "phpstan/phpstan":"^1.8.0",
+    "kint-php/kint":"^3.3",
+    "monolog/monolog":"*"
+  },
   "autoload": {
     "psr-4": {
       "Getnet\\": "src/Getnet"
     }
+  },
+  "autoload-dev":{
+    "psr-4":{
+      "Tests\\": "tests"
+    }
+  },
+  "scripts":{
+    "phpstan":"phpstan analyse -c phpstan.neon",
+    "phpunit":"phpunit --configuration phpunit.xml --testdox",
+    "test":[
+      "@phpstan",
+      "@phpunit"
+    ],
+    "test:unit":"phpunit --configuration phpunit.xml --testdox --exclude e2e",
+    "test:e2e":"phpunit --configuration phpunit.xml --testdox --group e2e",
+    "test:coverage":"phpunit --configuration phpunit.xml --coverage-clover build/logs/clover.xml --coverage-html build/coverage"
   },
   "authors": [
     {
@@ -30,14 +52,7 @@
     {
       "name": "Paulo Möbbs Santos",
       "email": "paulo.pwm@gmail.com"
-    },
-    {
-      "name": "Guilherme Billig",
-      "email": "guilherme.billig@vtsolucoes.com"
     }
   ],
-  "homepage": "https://github.com/VT-Solucoes/getnet-php",
-  "require-dev": {
-    "ext-curl": "*"
-  }
+  "homepage": "https://github.com/VT-Solucoes/getnet-php"
 }

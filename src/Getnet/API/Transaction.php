@@ -14,11 +14,19 @@ class Transaction implements \JsonSerializable
     use ToJsonTrait;
 
     const STATUS_AUTHORIZED = "AUTHORIZED";
+
     const STATUS_CONFIRMED = "CONFIRMED";
+
     const STATUS_PENDING = "PENDING";
+
+    const STATUS_WAITING = "WAITING";
+
     const STATUS_APPROVED = "APPROVED";
+
     const STATUS_CANCELED = "CANCELED";
+
     const STATUS_DENIED = "DENIED";
+
     const STATUS_ERROR = "ERROR";
 
     private $seller_id;
@@ -41,6 +49,21 @@ class Transaction implements \JsonSerializable
 
     private Boleto $boleto;
 
+
+    /**
+     *
+     * @return string
+     */
+    public function toJSON() {
+
+        $vars = get_object_vars($this);
+        $vars_clear = array_filter($vars, function ($value) {
+            return null !== $value;
+        });
+
+        return json_encode($vars_clear, JSON_PRETTY_PRINT);
+    }
+
     /**
      * @return mixed
      */
@@ -50,6 +73,7 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @param mixed $seller_id
      */
     public function setSellerId($seller_id): Transaction
@@ -60,6 +84,7 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @return mixed
      */
     public function getAmount()
@@ -68,6 +93,7 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @param mixed $amount
      */
     public function setAmount($amount): Transaction
@@ -78,14 +104,17 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @return string
      */
-    public function getCurrency(): string
+    public function getCurrency()
+   : string
     {
         return $this->currency;
     }
 
     /**
+     *
      * @param string $currency
      * @return Transaction
      */
@@ -98,7 +127,7 @@ class Transaction implements \JsonSerializable
 
     /**
      *
-     * @param $order_id
+     * @param string|null $order_id
      * @return Order
      */
     public function order($order_id): Order
@@ -110,18 +139,22 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @return Order
      */
-    public function getOrder(): Order
+    public function getOrder()
+   : Order
     {
         return $this->order;
     }
 
     /**
+     *
      * @param Order $order
      * @return Transaction
      */
-    public function setOrder(Order $order): Transaction
+    public function setOrder(Order $order)
+   : Transaction
     {
         $this->order = $order;
 
@@ -133,7 +166,8 @@ class Transaction implements \JsonSerializable
      * @param mixed $id
      * @return Customer
      */
-    public function customer($id = null): Customer
+    public function customer($id = null)
+   : Customer
     {
         $customer = new Customer($id);
 
@@ -143,18 +177,22 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @return Customer
      */
-    public function getCustomer(): Customer
+    public function getCustomer()
+   : Customer
     {
         return $this->customer;
     }
 
     /**
+     *
      * @param Customer $customer
      * @return Transaction
      */
-    public function setCustomer(Customer $customer): Transaction
+    public function setCustomer(Customer $customer)
+   : Transaction
     {
         $this->customer = $customer;
 
@@ -166,7 +204,8 @@ class Transaction implements \JsonSerializable
      * @param mixed $device_id
      * @return Device
      */
-    public function device($device_id): Device
+    public function device($device_id)
+   : Device
     {
         $device = new Device($device_id);
 
@@ -176,18 +215,22 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @return Device
      */
-    public function getDevice(): Device
+    public function getDevice()
+   : Device
     {
         return $this->device;
     }
 
     /**
+     *
      * @param Device $device
      * @return Transaction
      */
-    public function setDevice(Device $device): Transaction
+    public function setDevice(Device $device)
+   : Transaction
     {
         $this->device = $device;
 
@@ -195,6 +238,7 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @return mixed
      */
     public function getShippings()
@@ -203,6 +247,7 @@ class Transaction implements \JsonSerializable
     }
 
     /**
+     *
      * @param array $shippings
      * @return Transaction
      */
@@ -232,7 +277,7 @@ class Transaction implements \JsonSerializable
      */
     public function addShipping(Shipping $shipping)
     {
-        if (!is_array($this->shippings)) {
+        if (! is_array($this->shippings)) {
             $this->shippings = array();
         }
 
@@ -255,7 +300,6 @@ class Transaction implements \JsonSerializable
 
     /**
      *
-     * @param $brand
      * @return Credit
      */
     public function credit($brand = null): Credit
@@ -267,18 +311,22 @@ class Transaction implements \JsonSerializable
     }
 
     /**
-     * @return Credit
+     *
+     * @return Credit|null
      */
-    public function getCredit(): Credit
+    public function getCredit()
+   : Credit
     {
         return $this->credit;
     }
 
     /**
+     *
      * @param Credit $credit
      * @return Transaction
      */
-    public function setCredit(Credit $credit): Transaction
+    public function setCredit(Credit $credit)
+   : Transaction
     {
         $this->credit = $credit;
 
@@ -299,18 +347,22 @@ class Transaction implements \JsonSerializable
     }
 
     /**
-     * @return Credit
+     *
+     * @return Credit|null
      */
-    public function getDebit(): Credit
+    public function getDebit()
+   : Credit
     {
         return $this->debit;
     }
 
     /**
+     *
      * @param Credit $debit
      * @return Transaction
      */
-    public function setDebit(Credit $debit): Transaction
+    public function setDebit(Credit $debit)
+   : Transaction
     {
         $this->debit = $debit;
 
@@ -319,7 +371,7 @@ class Transaction implements \JsonSerializable
 
     /**
      *
-     * @param $our_number
+     * @param string|null $our_number
      * @return Boleto
      */
     public function boleto($our_number): Boleto
@@ -331,18 +383,22 @@ class Transaction implements \JsonSerializable
     }
 
     /**
-     * @return Boleto
+     *
+     * @return Boleto|null
      */
-    public function getBoleto(): Boleto
+    public function getBoleto()
+   : Boleto
     {
         return $this->boleto;
     }
 
     /**
+     *
      * @param Boleto $boleto
      * @return Transaction
      */
-    public function setBoleto(Boleto $boleto): Transaction
+    public function setBoleto(Boleto $boleto)
+   : Transaction
     {
         $this->boleto = $boleto;
 
