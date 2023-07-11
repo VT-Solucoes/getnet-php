@@ -11,9 +11,7 @@ use JsonSerializable;
  *
  * @package Getnet\API
  */
-class Address implements JsonSerializable, ToJsonInterface
-{
-    use ToJsonTrait;
+class Address implements \JsonSerializable {
 
     private $city;
 
@@ -31,6 +29,15 @@ class Address implements JsonSerializable, ToJsonInterface
 
     private $street;
 
+    public function __construct($postal_code = null)
+    {
+        $this->setPostalCode($postal_code);
+    }
+
+    public function jsonSerialize() {
+        return get_object_vars($this);
+    }
+
     /**
      *
      * @return mixed
@@ -46,7 +53,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setCity($city)
     {
-        $this->city = (string)$city;
+        $this->city = (string) $city;
 
         return $this;
     }
@@ -66,7 +73,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setComplement($complement)
     {
-        $this->complement = (string)$complement;
+        $this->complement = (string) $complement;
 
         return $this;
     }
@@ -86,7 +93,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setCountry($country)
     {
-        $this->country = (string)$country;
+        $this->country = (string) $country;
 
         return $this;
     }
@@ -106,7 +113,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setDistrict($district)
     {
-        $this->district = (string)$district;
+        $this->district = (string) $district;
 
         return $this;
     }
@@ -126,7 +133,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setNumber($number)
     {
-        $this->number = (string)$number;
+        $this->number = (string) $number;
 
         return $this;
     }
@@ -146,7 +153,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setPostalCode($postal_code)
     {
-        $this->postal_code = (string)$postal_code;
+        $this->postal_code = (string) $postal_code;
 
         return $this;
     }
@@ -166,7 +173,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setState($state)
     {
-        $this->state = (string)$state;
+        $this->state = (string) $state;
 
         return $this;
     }
@@ -186,7 +193,7 @@ class Address implements JsonSerializable, ToJsonInterface
      */
     public function setStreet($street)
     {
-        $this->street = (string)$street;
+        $this->street = (string) $street;
 
         return $this;
     }

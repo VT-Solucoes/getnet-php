@@ -17,9 +17,11 @@ class Credit implements JsonSerializable, ToJsonInterface
 
     //Pagamento completo à vista
     const TRANSACTION_TYPE_FULL = "FULL";
-    //Pagamento parcelado sem juros
+
+    // Pagamento parcelado sem juros
     const TRANSACTION_TYPE_INSTALL_NO_INTEREST = "INSTALL_NO_INTEREST";
-    //Pagamento parcelado com juros
+
+    // Pagamento parcelado com juros
     const TRANSACTION_TYPE_INSTALL_WITH_INTEREST = "INSTALL_WITH_INTEREST";
 
     private $authenticated;
@@ -30,7 +32,7 @@ class Credit implements JsonSerializable, ToJsonInterface
 
     private $number_installments;
 
-    private $pre_authorization;
+    private $pre_authorization = false;
 
     private $save_card_data;
 
@@ -52,6 +54,19 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
+        $vars = get_object_vars($this);
+        $vars_clear = array_filter($vars, function ($value) {
+            return null !== $value;
+        });
+
+            return $vars_clear;
+    }
+
+    /**
      * @return mixed
      */
     public function getAuthenticated()
@@ -60,6 +75,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $authenticated
      */
     public function setAuthenticated($authenticated)
@@ -70,6 +86,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getDelayed()
@@ -78,6 +95,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $delayed
      */
     public function setDelayed($delayed)
@@ -88,6 +106,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getDynamicMcc()
@@ -96,16 +115,17 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $dynamic_mcc
      */
     public function setDynamicMcc($dynamic_mcc)
     {
-        $this->dynamic_mcc = (int)$dynamic_mcc;
-
+        $this->dynamic_mcc = (int) $dynamic_mcc;
         return $this;
     }
 
     /**
+     *
      * @return mixed
      */
     public function getNumberInstallments()
@@ -114,16 +134,17 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $number_installments
      */
     public function setNumberInstallments($number_installments)
     {
-        $this->number_installments = (int)$number_installments;
-
+        $this->number_installments = (int) $number_installments;
         return $this;
     }
 
     /**
+     *
      * @return mixed
      */
     public function getPreAuthorization()
@@ -132,6 +153,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $pre_authorization
      */
     public function setPreAuthorization($pre_authorization)
@@ -142,6 +164,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getSaveCardData()
@@ -150,6 +173,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $save_card_data
      */
     public function setSaveCardData($save_card_data)
@@ -160,6 +184,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getSoftDescriptor()
@@ -168,16 +193,17 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $soft_descriptor
      */
     public function setSoftDescriptor($soft_descriptor)
     {
-        $this->soft_descriptor = (string)$soft_descriptor;
-
+        $this->soft_descriptor = (string) $soft_descriptor;
         return $this;
     }
 
     /**
+     *
      * @return mixed
      */
     public function getTransactionType()
@@ -186,23 +212,22 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $transaction_type
      */
     public function setTransactionType($transaction_type)
     {
-        $this->transaction_type = (string)$transaction_type;
-
+        $this->transaction_type = (string) $transaction_type;
         return $this;
     }
 
     /**
      *
-     * @param $token
+     * @param Token $token
      * @return Card
      */
-    public function card($token)
+    public function card(Token$token)
     {
-
         $card = new Card($token);
 
         $this->setCard($card);
@@ -211,6 +236,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return Card
      */
     public function getCard()
@@ -219,6 +245,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param Card $card
      */
     public function setCard(Card $card)
@@ -229,6 +256,7 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getCardholderMobile()
@@ -237,14 +265,12 @@ class Credit implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $cardholder_mobile
      */
     public function setCardholderMobile($cardholder_mobile)
     {
-        $this->cardholder_mobile = (string)$cardholder_mobile;
-
+        $this->cardholder_mobile = (string) $cardholder_mobile;
         return $this;
     }
-
-
 }

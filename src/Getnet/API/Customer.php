@@ -14,7 +14,7 @@ use JsonSerializable;
 class Customer implements JsonSerializable, ToJsonInterface
 {
     use ToJsonTrait;
-    
+
     const DOCUMENT_TYPE_CPF = "CPF";
     const DOCUMENT_TYPE_CNPJ = "CNPJ";
 
@@ -56,8 +56,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setCustomerId($customer_id)
     {
-        $this->customer_id = (string)$customer_id;
-
+        $this->customer_id = (string) $customer_id;
         return $this;
     }
 
@@ -76,8 +75,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setFirstName($first_name)
     {
-        $this->first_name = (string)$first_name;
-
+        $this->first_name = (string) $first_name;
         return $this;
     }
 
@@ -96,8 +94,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setLastName($last_name)
     {
-        $this->last_name = (string)$last_name;
-
+        $this->last_name = (string) $last_name;
         return $this;
     }
 
@@ -116,8 +113,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setName($name)
     {
-        $this->name = (string)$name;
-
+        $this->name = (string) $name;
         return $this;
     }
 
@@ -136,8 +132,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setEmail($email)
     {
-        $this->email = (string)$email;
-
+        $this->email = (string) $email;
         return $this;
     }
 
@@ -156,8 +151,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setDocumentType($document_type)
     {
-        $this->document_type = (string)$document_type;
-
+        $this->document_type = (string) $document_type;
         return $this;
     }
 
@@ -176,8 +170,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setDocumentNumber($document_number)
     {
-        $this->document_number = (string)$document_number;
-
+        $this->document_number = (string) $document_number;
         return $this;
     }
 
@@ -196,8 +189,7 @@ class Customer implements JsonSerializable, ToJsonInterface
      */
     public function setPhoneNumber($phone_number)
     {
-        $this->phone_number = (string)$phone_number;
-
+        $this->phone_number = (string) $phone_number;
         return $this;
     }
 

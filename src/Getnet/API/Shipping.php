@@ -26,7 +26,7 @@ class Shipping implements JsonSerializable, ToJsonInterface
     private $shipping_amount = 0;
 
     private $address;
-    
+
     /**
      *
      * @return mixed
@@ -42,8 +42,7 @@ class Shipping implements JsonSerializable, ToJsonInterface
      */
     public function setFirstName($first_name)
     {
-        $this->first_name = (string)$first_name;
-
+        $this->first_name = (string) $first_name;
         return $this;
     }
 
@@ -62,8 +61,7 @@ class Shipping implements JsonSerializable, ToJsonInterface
      */
     public function setName($name)
     {
-        $this->name = (string)$name;
-
+        $this->name = (string) $name;
         return $this;
     }
 
@@ -82,8 +80,7 @@ class Shipping implements JsonSerializable, ToJsonInterface
      */
     public function setEmail($email)
     {
-        $this->email = (string)$email;
-
+        $this->email = (string) $email;
         return $this;
     }
 
@@ -102,8 +99,7 @@ class Shipping implements JsonSerializable, ToJsonInterface
      */
     public function setPhoneNumber($phone_number)
     {
-        $this->phone_number = (string)$phone_number;
-
+        $this->phone_number = (string) $phone_number;
         return $this;
     }
 
@@ -122,8 +118,7 @@ class Shipping implements JsonSerializable, ToJsonInterface
      */
     public function setShippingAmount($shipping_amount)
     {
-        $this->shipping_amount = (int)($shipping_amount * 100);
-
+        $this->shipping_amount = (int) ($shipping_amount * 100);
         return $this;
     }
 
@@ -138,7 +133,7 @@ class Shipping implements JsonSerializable, ToJsonInterface
 
     /**
      *
-     * @param mixed $address
+     * @param Address $address
      */
     public function setAddress(Address $address)
     {
@@ -167,7 +162,6 @@ class Shipping implements JsonSerializable, ToJsonInterface
      */
     public function populateByCustomer(Customer $customer)
     {
-
         $this->setFirstName($customer->getFirstName());
         $this->setName($customer->getName());
         $this->setEmail($customer->getEmail());
@@ -176,5 +170,4 @@ class Shipping implements JsonSerializable, ToJsonInterface
 
         return $this;
     }
-
 }

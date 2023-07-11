@@ -10,9 +10,7 @@ use JsonSerializable;
  *
  * @package Getnet\API
  */
-class Boleto implements JsonSerializable
-{
-    use ToJsonTrait;
+class Boleto implements \JsonSerializable {
 
     const PROVIDER_SANTANDER = "santander";
 
@@ -27,14 +25,19 @@ class Boleto implements JsonSerializable
     private $provider;
 
     /**
-     * Boleto constructor.
      *
-     * @param
-     *            $our_number
+     * @param string|null $our_number
+     *
      */
-    public function __construct($our_number)
+    public function __construct($our_number = null)
     {
-        $this->our_number = $our_number;
+        if ($our_number) {
+            $this->our_number = $our_number;
+        }
+    }
+
+    public function jsonSerialize() {
+        return get_object_vars($this);
     }
 
     /**
@@ -141,5 +144,4 @@ class Boleto implements JsonSerializable
 
         return $this;
     }
-
 }

@@ -30,7 +30,11 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
 
     public $received_at;
 
+    public $message;
+
     public $error_message;
+
+    public $error_code;
 
     public ?string $description = null;
 
@@ -41,6 +45,28 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     public $responseJson;
 
     public string $status_label;
+
+    /**
+     * TODO refactor and mapper individual and remove public props
+     * @param array $json
+     *
+     * @return $this
+     */
+    public function mapperJson($json)
+    {
+        if (is_array($json)) {
+            array_walk_recursive($json, function ($value, $key) {
+
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
+            });
+        }
+
+        $this->setResponseJSON($json);
+
+        return $this;
+    }
 
     /**
      * @return mixed
@@ -54,7 +80,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
      * @param mixed $error_message
      * @return BaseResponse
      */
-    public function setErrorMessage($error_message): BaseResponse
+    public function setErrorMessage($error_message)
+   : BaseResponse
     {
         $this->error_message = $error_message;
 
@@ -73,7 +100,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
      * @param mixed $status_code
      * @return BaseResponse
      */
-    public function setStatusCode($status_code): BaseResponse
+    public function setStatusCode($status_code)
+   : BaseResponse
     {
         $this->status_code = $status_code;
 
@@ -92,7 +120,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
      * @param mixed $description_detail
      * @return BaseResponse
      */
-    public function setDescriptionDetail($description_detail): BaseResponse
+    public function setDescriptionDetail($description_detail)
+   : BaseResponse
     {
         $this->description_detail = $description_detail;
 
@@ -111,7 +140,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
      * @param mixed $description
      * @return BaseResponse
      */
-    public function setErrorDescription($description): BaseResponse
+    public function setErrorDescription($description)
+   : BaseResponse
     {
         $this->description = $description;
 
@@ -129,7 +159,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     /**
      * @param mixed $payment_id
      */
-    public function setPaymentId($payment_id): BaseResponse
+    public function setPaymentId($payment_id)
+   : BaseResponse
     {
         $this->payment_id = $payment_id;
 
@@ -147,7 +178,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     /**
      * @param mixed $seller_id
      */
-    public function setSellerId($seller_id): BaseResponse
+    public function setSellerId($seller_id)
+   : BaseResponse
     {
         $this->seller_id = $seller_id;
 
@@ -165,7 +197,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     /**
      * @param mixed $amount
      */
-    public function setAmount($amount): BaseResponse
+    public function setAmount($amount)
+   : BaseResponse
     {
         $this->amount = $amount;
 
@@ -183,7 +216,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     /**
      * @param mixed $currency
      */
-    public function setCurrency($currency): BaseResponse
+    public function setCurrency($currency)
+   : BaseResponse
     {
         $this->currency = $currency;
 
@@ -201,7 +235,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     /**
      * @param mixed $order_id
      */
-    public function setOrderId($order_id): BaseResponse
+    public function setOrderId($order_id)
+   : BaseResponse
     {
         $this->order_id = $order_id;
 
@@ -226,6 +261,7 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
         } elseif (isset($this->redirect_url)) {
             $this->status = Transaction::STATUS_PENDING;
         } elseif (isset($this->status_label)) {
+            // TODO check why return EM ABERTO in boleto
             $this->status = $this->status_label;
         }
 
@@ -235,7 +271,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     /**
      * @param mixed $status
      */
-    public function setStatus($status): BaseResponse
+    public function setStatus($status)
+   : BaseResponse
     {
         $this->status = $status;
 
@@ -253,7 +290,8 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     /**
      * @param mixed $received_at
      */
-    public function setReceivedAt($received_at): BaseResponse
+    public function setReceivedAt($received_at)
+   : BaseResponse
     {
         $this->received_at = $received_at;
 
@@ -297,6 +335,45 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     public function setResponseJson($array): BaseResponse
     {
         $this->responseJson = json_encode($array);
+        return $this;
+    }
+
+    /**
+     *
+     * @return mixed
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     *
+     * @param mixed $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
+     *
+     * @return mixed
+     */
+    public function getError_code()
+    {
+        return $this->error_code;
+    }
+
+    /**
+     *
+     * @param mixed $error_code
+     */
+    public function setError_code($error_code)
+    {
+        $this->error_code = $error_code;
 
         return $this;
     }

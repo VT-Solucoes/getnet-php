@@ -44,6 +44,19 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
+        $vars = get_object_vars($this);
+        $vars_clear = array_filter($vars, function ($value) {
+            return null !== $value;
+        });
+
+        return $vars_clear;
+    }
+
+    /**
      * @return mixed
      */
     public function getBrand()
@@ -52,16 +65,17 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $brand
      */
     public function setBrand($brand)
     {
-        $this->brand = (string)$brand;
-
+        $this->brand = (string) $brand;
         return $this;
     }
 
     /**
+     *
      * @return mixed
      */
     public function getCardholderName()
@@ -70,6 +84,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $cardholder_name
      */
     public function setCardholderName($cardholder_name): Card
@@ -80,6 +95,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getExpirationMonth()
@@ -88,6 +104,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $expiration_month
      */
     public function setExpirationMonth($expiration_month): Card
@@ -98,6 +115,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getExpirationYear()
@@ -106,6 +124,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $expiration_year
      */
     public function setExpirationYear($expiration_year): Card
@@ -116,6 +135,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getNumberToken()
@@ -135,6 +155,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @return mixed
      */
     public function getSecurityCode()
@@ -143,6 +164,7 @@ class Card implements JsonSerializable, ToJsonInterface
     }
 
     /**
+     *
      * @param mixed $security_code
      */
     public function setSecurityCode($security_code): Card
@@ -151,5 +173,4 @@ class Card implements JsonSerializable, ToJsonInterface
 
         return $this;
     }
-
 }

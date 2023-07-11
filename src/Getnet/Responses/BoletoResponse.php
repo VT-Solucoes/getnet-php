@@ -33,7 +33,8 @@ class BoletoResponse extends BaseResponse
      *
      * @param mixed $base_url
      */
-    public function setBaseUrl($base_url): BoletoResponse
+    public function setBaseUrl($base_url)
+   : BoletoResponse
     {
         $this->base_url = $base_url;
 
@@ -83,7 +84,8 @@ class BoletoResponse extends BaseResponse
      * @param mixed $document_number
      * @return BoletoResponse
      */
-    public function setDocumentNumber($document_number): BoletoResponse
+    public function setDocumentNumber($document_number)
+   : BoletoResponse
     {
         $this->document_number = $document_number;
 
@@ -94,7 +96,8 @@ class BoletoResponse extends BaseResponse
      *
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
+   : string
     {
         return $this->description;
     }
@@ -125,7 +128,8 @@ class BoletoResponse extends BaseResponse
      * @param mixed $boleto_id
      * @return BoletoResponse
      */
-    public function setBoletoId($boleto_id): BoletoResponse
+    public function setBoletoId($boleto_id)
+   : BoletoResponse
     {
         $this->boleto_id = $boleto_id;
 
@@ -146,7 +150,8 @@ class BoletoResponse extends BaseResponse
      * @param mixed $bank
      * @return BoletoResponse
      */
-    public function setBank($bank): BoletoResponse
+    public function setBank($bank)
+   : BoletoResponse
     {
         $this->bank = $bank;
 
@@ -156,7 +161,8 @@ class BoletoResponse extends BaseResponse
     /**
      * @return string
      */
-    public function getStatusLabel(): string
+    public function getStatusLabel()
+   : string
     {
         return $this->status_label;
     }
@@ -187,7 +193,8 @@ class BoletoResponse extends BaseResponse
      * @param mixed $typeful_line
      * @return BoletoResponse
      */
-    public function setTypefulLine($typeful_line): BoletoResponse
+    public function setTypefulLine($typeful_line)
+   : BoletoResponse
     {
         $this->typeful_line = $typeful_line;
 
@@ -208,7 +215,8 @@ class BoletoResponse extends BaseResponse
      * @param mixed $bar_code
      * @return BoletoResponse
      */
-    public function setBarCode($bar_code): BoletoResponse
+    public function setBarCode($bar_code)
+   : BoletoResponse
     {
         $this->bar_code = $bar_code;
 
@@ -229,7 +237,8 @@ class BoletoResponse extends BaseResponse
      * @param mixed $issue_date
      * @return BoletoResponse
      */
-    public function setIssueDate($issue_date): BoletoResponse
+    public function setIssueDate($issue_date)
+   : BoletoResponse
     {
         $this->issue_date = $issue_date;
 
@@ -250,7 +259,8 @@ class BoletoResponse extends BaseResponse
      * @param mixed $expiration_date
      * @return BoletoResponse
      */
-    public function setExpirationDate($expiration_date): BoletoResponse
+    public function setExpirationDate($expiration_date)
+   : BoletoResponse
     {
         $this->expiration_date = $expiration_date;
 
@@ -271,11 +281,11 @@ class BoletoResponse extends BaseResponse
      * @param mixed $our_number
      * @return BoletoResponse
      */
-    public function setOurNumber($our_number): BoletoResponse
+    public function setOurNumber($our_number)
+   : BoletoResponse
     {
         $this->our_number = $our_number;
 
         return $this;
     }
-
 }
