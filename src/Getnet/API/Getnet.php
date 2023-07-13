@@ -12,6 +12,7 @@ use Getnet\Responses\AuthorizeResponse;
 use Getnet\Responses\BaseResponse;
 use Getnet\Responses\BoletoResponse;
 use Getnet\Responses\CreditCardTokenResponse;
+use Getnet\Responses\PixResponse;
 use Getnet\Responses\StoreCreditCardResponse;
 
 /**
@@ -312,7 +313,7 @@ class Getnet
             }
 
             $request = new Request($this);
-            $response = $request->post($this, "/v1/payments/credit/" . $payment_id . "/cancel", json_encode($amount));
+            $response = $request->post($this, "/v1/payments/credit/" . $payment_id . "/cancel", json_encode($bodyParams));
         } catch (Exception $e) {
 
             $error = new BaseResponse();
@@ -478,7 +479,7 @@ class Getnet
     /**
      *
      * @param \Exception $e
-     * @return \Getnet\API\BaseResponse
+     * @return \Getnet\Responses\BaseResponse
      */
     private function generateErrorResponse($e)
     {

@@ -13,6 +13,8 @@ use JsonSerializable;
  */
 class Address implements \JsonSerializable {
 
+    use ToJsonTrait;
+
     private $city;
 
     private $complement;

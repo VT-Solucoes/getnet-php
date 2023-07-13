@@ -12,6 +12,8 @@ use JsonSerializable;
  */
 class Boleto implements \JsonSerializable {
 
+    use ToJsonTrait;
+
     const PROVIDER_SANTANDER = "santander";
 
     private $our_number;

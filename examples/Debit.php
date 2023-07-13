@@ -24,10 +24,13 @@ $transaction->order("123456")
             ->setSalesTax(0);
 
 //Criar token Cartão
-$tokenCard = new Token("5155901222280001", "customer_210818263", $getnet);
+$tokenCard = new Token();
+$tokenCard->setCardNumber("5155901222280001");
+$tokenCard->setCustomerId("customer_210818263");
+$tokenCard->setGetnet($getnet);
 
 //Adicionar dados do Pagamento
-$transaction->debit()
+$transaction->debit(Card::BRAND_MASTERCARD)
             ->setCardholderMobile("5551999887766")
             ->setDynamicMcc("1799")
             ->setSoftDescriptor("LOJA*TESTE*COMPRA-123")
@@ -83,11 +86,11 @@ $transaction->device("device_id")->setIpAddress("127.0.0.1");
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $response = $getnet->authorize($transaction);
     print_r($response->getStatus()."\n");
-    
-    if (!($response instanceof \Getnet\API\AuthorizeResponse)) {
+
+    if (!($response instanceof \Getnet\Responses\AuthorizeResponse)) {
         return;
     }
-    
+
     // Pega a url atual como retorno
     $URL_NOTIFY = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"] . "?payment_id={$response->getPaymentId()}";
     ?>
@@ -95,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         <input type="hidden" name="MD"  value="<?php echo $response->getIssuerPaymentId();?>" />
         <input type="hidden" name="PaReq"  value="<?php echo $response->getPayerAuthenticationRequest();?>" />
         <input type="hidden" name="TermUrl"  value="<?php echo $URL_NOTIFY;?>" />
-        
+
         <input type="submit" value="Authentication Card" />
     </form>
 
@@ -105,12 +108,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $payment_id = $_GET['payment_id'];
     $paRes = $_POST['PaRes'];
 
-    //CONFIRMAR O PAGAMENTO COM payer_authentication_response recibo na URL de Noficação
+    //CONFIRMAR O PAGAMENTO COM payer_authentication_response recibo na URL de Notificação
     $response = $getnet->authorizeConfirmDebit($payment_id, $paRes);
     print_r($response->getStatus()."\n");
-    
+
     ### CANCELA PAGAMENTO (CANCEL)
-    $cancel = $getnet->cancelTransaction($payment_id, $response->getAmount(), uniqid());
-    
+    $cancel = $getnet->authorizeCancel($payment_id, $response->getAmount());
+
     print_r($cancel->getStatus()."\n");
 }

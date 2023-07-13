@@ -3,7 +3,7 @@ namespace Tests;
 
 use Getnet\API\Credit;
 use Getnet\API\Card;
-use Getnet\API\AuthorizeResponse;
+use Getnet\Responses\AuthorizeResponse;
 use Getnet\API\Transaction;
 
 final class AuthorizePosteriorTest extends TestBase
@@ -39,7 +39,7 @@ final class AuthorizePosteriorTest extends TestBase
             ->setSecurityCode("123");
 
         $response = $this->getnetService()->authorize($transaction);
-        
+
         if (!($response instanceof AuthorizeResponse)) {
             throw new \Exception($response->getResponseJSON());
         }

@@ -1,5 +1,5 @@
 <?php
-namespace Getnet\API;
+namespace Getnet\Responses;
 
 /**
  * Class PixResponse

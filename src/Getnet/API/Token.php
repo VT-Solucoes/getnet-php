@@ -15,17 +15,17 @@ class Token
     /**
      * @var string
      */
-    private string $number_token;
+    private string $number_token = "";
 
     /**
      * @var string
      */
-    private string $card_number;
+    private string $card_number = "";
 
     /**
      * @var string
      */
-    private string $customer_id;
+    private string $customer_id = "";
 
     /**
      * @var Getnet

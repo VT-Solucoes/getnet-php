@@ -30,8 +30,6 @@ class Request
     const CURL_TYPE_PATCH = "PATCH";
     const CURL_TYPE_DELETE = "DELETE";
 
-    const CURL_TYPE_DELETE = "DELETE";
-
     /**
      * Request constructor.
      *
@@ -141,16 +139,16 @@ class Request
         if ($method == self::CURL_TYPE_POST) {
             $defaultCurlOptions[CURLOPT_HTTPHEADER][] = 'Authorization: Bearer ' . $credentials->getAuthorizationToken();
             curl_setopt($curl, CURLOPT_POST, 1);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);
         } elseif ($method == self::CURL_TYPE_PUT) {
             $defaultCurlOptions[CURLOPT_HTTPHEADER][] = 'Authorization: Bearer ' . $credentials->getAuthorizationToken();
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::CURL_TYPE_PUT);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);
         } elseif ($method == self::CURL_TYPE_PATCH) {
             $defaultCurlOptions[CURLOPT_HTTPHEADER][] = 'Authorization: Bearer ' . $credentials->getAuthorizationToken();
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::CURL_TYPE_PATCH);
             curl_setopt($curl, CURLOPT_POST, 1);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);
         } elseif ($method == self::CURL_TYPE_DELETE) {
             $defaultCurlOptions[CURLOPT_HTTPHEADER][] = 'Authorization: Bearer ' . $credentials->getAuthorizationToken();
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::CURL_TYPE_DELETE);

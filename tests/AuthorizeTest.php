@@ -3,7 +3,7 @@ namespace Tests;
 
 use Getnet\API\Credit;
 use Getnet\API\Card;
-use Getnet\API\AuthorizeResponse;
+use Getnet\Responses\AuthorizeResponse;
 use Getnet\API\Transaction;
 
 final class AuthorizeTest extends TestBase
@@ -43,7 +43,7 @@ final class AuthorizeTest extends TestBase
         if (!($response instanceof AuthorizeResponse)) {
             throw new \Exception($response->getResponseJSON());
         }
-        
+
         $this->assertSame(Transaction::STATUS_APPROVED, $response->getStatus(), $response->getResponseJSON());
         $this->assertSame($transaction->getAmount(), $response->getAmount());
         $this->assertSame($transaction->getOrder()->getOrderId(), $response->getOrderId());

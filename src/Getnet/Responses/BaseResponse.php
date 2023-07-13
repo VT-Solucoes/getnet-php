@@ -299,29 +299,6 @@ class BaseResponse implements JsonSerializable, ToJsonInterface
     }
 
     /**
-     * @param array $json
-     * @return $this
-     */
-    public function mapperJson(array $json): BaseResponse
-    {
-        array_walk_recursive(
-            $json,
-            function ($value, $key) {
-                if ($key == 'info') {
-                    $key = 'description';
-                }
-                if (property_exists($this, $key)) {
-                    $this->{$key} = $value;
-                }
-            }
-        );
-
-        $this->setResponseJson($json);
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     public function getResponseJson()

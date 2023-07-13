@@ -23,7 +23,10 @@ $transaction->order("123456")
 ->setSalesTax(0);
 
 //Criar token Cartão
-$tokenCard = new Token("5155901222280001", "customer_210818263", $getnet);
+$tokenCard = new Token();
+$tokenCard->setCardNumber("5155901222280001");
+$tokenCard->setCustomerId("customer_210818263");
+$tokenCard->setGetnet($getnet);
 
 //Adicionar dados do Pagamento
 $transaction->credit()
@@ -83,9 +86,7 @@ $transaction->shipping()
 
 //Adiciona o dispositivo
 $transaction->device("device_id")->setIpAddress("127.0.0.1");
-
 $response = $getnet->authorize($transaction);
-
 print_r($response->getStatus()."\n");
 
 ### CANCELA PAGAMENTO (CANCEL)

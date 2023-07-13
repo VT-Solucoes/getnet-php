@@ -1,10 +1,9 @@
 <?php
 namespace Tests;
 
-use Getnet\API\Transaction;
-use Getnet\API\BoletoRespose;
-use Getnet\API\PixResponse;
 use Getnet\API\PixTransaction;
+use Getnet\API\Transaction;
+use Getnet\Responses\PixResponse;
 
 final class PixTest extends TestBase
 {
@@ -19,9 +18,9 @@ final class PixTest extends TestBase
         $transaction->setCurrency("BRL");
         $transaction->setOrderId('DEV-1608748980');
         $transaction->setCustomerId('12345');
-        
+
         $response = $this->getnetService()->pix($transaction);
-        
+
         if (!($response instanceof PixResponse)) {
             throw new \Exception($response->getResponseJSON());
         }

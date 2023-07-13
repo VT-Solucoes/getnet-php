@@ -2,7 +2,7 @@
 namespace Tests;
 
 use Getnet\API\Transaction;
-use Getnet\API\BoletoRespose;
+use Getnet\Responses\BoletoResponse;
 use Getnet\API\Boleto;
 
 final class BoletoTest extends TestBase
@@ -12,7 +12,7 @@ final class BoletoTest extends TestBase
      *
      * @group e2e
      */
-    public function testBoletoCreate(): BoletoRespose
+    public function testBoletoCreate(): BoletoResponse
     {
         $transaction = $this->generateMockTransaction(false);
         $transaction->setAmount(1096.88);
@@ -24,15 +24,15 @@ final class BoletoTest extends TestBase
             ->setInstructions("Não receber após o vencimento");
 
         $response = $this->getnetService()->boleto($transaction);
-        
-        if (!($response instanceof BoletoRespose)) {
+
+        if (!($response instanceof BoletoResponse)) {
             throw new \Exception($response->getResponseJSON());
         }
 
         // TODO
         $this->assertSame(Transaction::STATUS_PENDING, $response->status, $response->getResponseJSON());
         $this->assertSame('EM ABERTO', $response->getStatus(), $response->getResponseJSON());
-        
+
         $this->assertSame($transaction->getOrder()->getOrderId(), $response->getOrderId());
         $this->assertNotEmpty($response->getPaymentId());
         $this->assertNotEmpty($response->getBoletoId());

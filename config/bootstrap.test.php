@@ -17,8 +17,5 @@ require_once $ROOTDIR . '/config/env.test.php';
 function getnetServiceTest()
 {
     $getnet = new Getnet(getenv('GETNET_CLIENT_ID'), getenv('GETNET_CLIENT_SECRET'), Environment::sandbox());
-
-    $getnet->setSellerId(getenv('GETNET_SELLER_ID'));
-
-    return $getnet;
+    return $getnet->setSellerId(getenv('GETNET_SELLER_ID'));
 }
